@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
   const user = authenticateRequest(req);
   if (!user) return unauthorized(res);
 
-  const { id } = req.query;
+  const { ref: id } = req.query;
   const { status, payment_status } = req.body || {};
 
   if (!status && !payment_status) {
