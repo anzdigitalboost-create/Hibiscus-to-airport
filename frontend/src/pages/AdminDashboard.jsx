@@ -122,12 +122,13 @@ const AdminDashboard = () => {
           'Pragma': 'no-cache'
         }
       });
-      setBookings(response.data);
-      
-      const total = response.data.length;
-      const pending = response.data.filter(b => b.status === 'pending').length;
-      const confirmed = response.data.filter(b => b.status === 'confirmed').length;
-      const totalRevenue = response.data
+      const fetchedBookings = response.data.bookings || [];
+      setBookings(fetchedBookings);
+
+      const total = fetchedBookings.length;
+      const pending = fetchedBookings.filter(b => b.status === 'pending').length;
+      const confirmed = fetchedBookings.filter(b => b.status === 'confirmed').length;
+      const totalRevenue = fetchedBookings
         .filter(b => b.payment_status === 'paid')
         .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
       
@@ -256,7 +257,7 @@ const AdminDashboard = () => {
           'Pragma': 'no-cache'
         }
       });
-      setDrivers(response.data);
+      setDrivers(response.data.drivers || []);
     } catch {
       // Drivers fetch failed — non-critical
     }
@@ -425,7 +426,7 @@ const AdminDashboard = () => {
       toast({ title: 'Payment Link Sent', description: response.data.message });
       fetchBookings();
     } catch (error) {
-      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to send payment link', variant: 'destructive' });
+      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to send payment link', variant: 'destructive' });
     }
   };
 
@@ -615,7 +616,7 @@ const AdminDashboard = () => {
       setAssigningDriver(true);
       const token = localStorage.getItem('admin_token');
       await axios.post(`${BACKEND_URL}/api/bookings/${bookingId}/assign-driver`, {
-        driver_id: parseInt(selectedDriverId),
+        driver_id: selectedDriverId,
         driver_payout: parseFloat(driverPayout) || 0,
         notes_to_driver: driverNotes
       }, {
@@ -626,7 +627,7 @@ const AdminDashboard = () => {
       // Update selected booking with fresh data
       const updatedBookings = (await axios.get(`${BACKEND_URL}/api/bookings`, {
         headers: { Authorization: `Bearer ${token}`, 'Cache-Control': 'no-cache' }
-      })).data;
+      })).data.bookings || [];
       const updated = updatedBookings.find(b => b.id === bookingId);
       if (updated) {
         setSelectedBooking(updated);
@@ -634,7 +635,7 @@ const AdminDashboard = () => {
         setDriverPayout(updated.driver_payout || '');
       }
     } catch (error) {
-      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to assign driver', variant: 'destructive' });
+      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to assign driver', variant: 'destructive' });
     } finally {
       setAssigningDriver(false);
     }
@@ -652,7 +653,7 @@ const AdminDashboard = () => {
       await fetchBookings();
       const updatedBookings = (await axios.get(`${BACKEND_URL}/api/bookings`, {
         headers: { Authorization: `Bearer ${token}`, 'Cache-Control': 'no-cache' }
-      })).data;
+      })).data.bookings || [];
       const updated = updatedBookings.find(b => b.id === bookingId);
       if (updated) {
         setSelectedBooking(updated);
@@ -660,7 +661,7 @@ const AdminDashboard = () => {
         setDriverPayout(updated.totalPrice ? (updated.totalPrice * 0.8).toFixed(2) : '');
       }
     } catch (error) {
-      toast({ title: 'Error', description: error.response?.data?.detail || 'Failed to unassign driver', variant: 'destructive' });
+      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to unassign driver', variant: 'destructive' });
     } finally {
       setAssigningDriver(false);
     }

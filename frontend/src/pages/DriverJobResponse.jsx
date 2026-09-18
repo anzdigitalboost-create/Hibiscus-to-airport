@@ -55,7 +55,7 @@ const DriverJobResponse = () => {
         setResponse('declined');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to load job details');
+      setError(err.response?.data?.error || 'Failed to load job details');
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ const DriverJobResponse = () => {
       });
       setResponse('accepted');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to accept job');
+      setError(err.response?.data?.error || 'Failed to accept job');
     } finally {
       setResponding(false);
     }
@@ -86,7 +86,7 @@ const DriverJobResponse = () => {
       });
       setResponse('declined');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to decline job');
+      setError(err.response?.data?.error || 'Failed to decline job');
     } finally {
       setResponding(false);
     }

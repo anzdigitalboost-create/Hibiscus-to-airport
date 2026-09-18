@@ -244,6 +244,43 @@ function sendPasswordResetEmail(email, resetToken) {
 }
 
 /**
+ * Send a Stripe payment link email to the customer.
+ */
+function sendPaymentLinkEmail(booking, paymentUrl) {
+  const ref = escapeHtml(booking.booking_ref || "N/A");
+  const name = escapeHtml(booking.name);
+  const formattedDate = formatDateWithDay(booking.date);
+  const time = escapeHtml(booking.time);
+  const totalPrice = booking.pricing?.totalPrice || booking.total_price || booking.totalPrice || 0;
+  const link = escapeHtml(paymentUrl);
+
+  const subject = `Payment Required - Booking ${ref}`;
+
+  const body = `
+    <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+      <div style="background: linear-gradient(135deg, #1f2937, #111827); color: #fff; padding: 30px; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">Complete Your Payment</h1>
+      </div>
+      <div style="background: #fff; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb;">
+        <p>Hi ${name},</p>
+        <p>Please complete payment for your upcoming airport transfer.</p>
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+          <p><strong>Booking:</strong> ${ref}</p>
+          <p><strong>Date &amp; Time:</strong> ${formattedDate} at ${time}</p>
+          <p><strong>Amount Due:</strong> $${Number(totalPrice).toFixed(2)} NZD</p>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${link}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 15px 40px; border-radius: 8px; text-decoration: none; font-weight: 600;">Pay Now</a>
+        </div>
+        <p style="font-size: 12px; color: #666; word-break: break-all;">${link}</p>
+        <p>Questions? Contact us at 021 743 321 or info@bookaride.co.nz</p>
+      </div>
+    </div>`;
+
+  return sendEmail(booking.email, subject, body);
+}
+
+/**
  * Send day-before reminder email.
  */
 function sendReminderEmail(booking) {
@@ -285,4 +322,5 @@ module.exports = {
   sendCancellationEmail,
   sendPasswordResetEmail,
   sendReminderEmail,
+  sendPaymentLinkEmail,
 };

@@ -294,7 +294,7 @@ function PublicRoutes() {
 
       {/* Driver / tracking pages */}
       <Route path="/driver-portal" element={<DriverPortal />} />
-      <Route path="/driver/job/:id" element={<DriverJobResponse />} />
+      <Route path="/driver/job/:bookingId" element={<DriverJobResponse />} />
       <Route path="/driver-tracking" element={<DriverTracking />} />
       <Route path="/customer-tracking" element={<CustomerTracking />} />
       <Route path="/tracking/:trackingRef" element={<CustomerTracking />} />
