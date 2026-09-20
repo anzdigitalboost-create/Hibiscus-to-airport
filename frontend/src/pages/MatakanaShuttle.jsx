@@ -39,7 +39,7 @@ const MatakanaShuttle = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Button 
-                onClick={() => window.location.href = '/booking'}
+                onClick={() => window.location.href = '/book-now'}
                 className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-xl"
               >
                 Book Matakana Shuttle
@@ -177,7 +177,7 @@ const MatakanaShuttle = () => {
             Book your shuttle from Hibiscus Coast to Matakana today
           </p>
           <Button 
-            onClick={() => window.location.href = '/booking'}
+            onClick={() => window.location.href = '/book-now'}
             className="bg-gold hover:bg-amber-500 text-black px-12 py-7 text-lg font-bold shadow-2xl"
           >
             Book Now

@@ -1,26 +1,20 @@
 {
-  "buildCommand": "cd frontend && yarn install && yarn build",
-  "outputDirectory": "frontend/build",
-  "framework": null,
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "^/pricing/?$", "status": 301, "headers": { "Location": "/booking" } },
-    { "src": "^/api/(.*)", "dest": "/api/$1" },
-    { "src": "^/(.*)", "dest": "/index.html" }
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "redirects": [
+    { "source": "/pricing", "destination": "/book-now", "permanent": true },
+    { "source": "/booking", "destination": "/book-now", "permanent": true },
+    { "source": "/admin", "destination": "https://www.bookaride.co.nz/admin", "permanent": false },
+    { "source": "/admin/:path*", "destination": "https://www.bookaride.co.nz/admin/:path*", "permanent": false }
   ],
-  "crons": [
+  "rewrites": [
     {
-      "path": "/api/cron/reminders",
-      "schedule": "0 5 * * *"
+      "source": "/api/:path*",
+      "destination": "https://www.bookaride.co.nz/api/:path*"
     },
     {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 6 * * *"
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }

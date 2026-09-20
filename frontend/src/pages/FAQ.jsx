@@ -156,7 +156,7 @@ const FAQ = () => {
                 Email info@bookaride.co.nz
               </a>
               <a
-                href="/booking"
+                href="/book-now"
                 className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
               >
                 Book Online

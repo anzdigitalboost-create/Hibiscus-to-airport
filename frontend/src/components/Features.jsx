@@ -102,7 +102,7 @@ const Features = () => {
               Experience reliable, professional airport transportation
             </p>
             <Button
-              onClick={() => window.location.href = '/booking'}
+              onClick={() => window.location.href = '/book-now'}
               className="bg-gradient-to-r from-[#1B2B4B] to-[#2D4A7A] hover:from-[#162340] hover:to-[#264068] text-white px-10 py-6 text-lg font-semibold shadow-sm">
               Book Now
             </Button>

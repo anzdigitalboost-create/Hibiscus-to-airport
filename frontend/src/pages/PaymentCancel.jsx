@@ -38,7 +38,7 @@ const PaymentCancel = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => navigate('/booking')}
+                onClick={() => navigate('/book-now')}
                 className="bg-gold hover:bg-amber-500 text-black font-bold py-6 px-8"
               >
                 Try Again

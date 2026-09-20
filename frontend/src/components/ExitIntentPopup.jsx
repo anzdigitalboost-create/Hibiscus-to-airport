@@ -56,7 +56,7 @@ const ExitIntentPopup = () => {
 
   const handleBookNow = () => {
     setIsVisible(false);
-    navigate('/booking');
+    navigate('/book-now');
   };
 
   if (!isVisible) return null;

@@ -1,4 +1,4 @@
-# CLAUDE.md - Source of Truth for Hibiscus to Airport
+# CLAUDE.md — Hibiscus to Airport (hibiscustoairport.co.nz)
 
 ## Business Details (DO NOT INVENT OR CHANGE)
 
@@ -12,124 +12,89 @@
 - **Hours:** 24/7 including public holidays
 - **Currency:** NZD
 
-## Architecture (OWNER-APPROVED — March 2026)
+## What this repo is (OWNER-APPROVED — September 2026)
 
-**Single-platform deployment on Vercel. No separate backend service.**
+A React/Vite **frontend only**. There is **no backend here**. This site is a
+storefront for the shared Book A Ride platform, exactly like bookaridenz.com:
 
-- **Platform:** Vercel (frontend + serverless API routes — ONE deployment)
-- **Frontend:** React app (Create React App + Craco + Tailwind)
-- **API:** Vercel Serverless Functions (Node.js) in `/api/` directory
-- **Database:** Neon (PostgreSQL) via `@neondatabase/serverless` — DO NOT use MongoDB
-- **Payments:** Stripe (Node.js SDK)
-- **SMS:** Twilio (Node.js SDK)
-- **Email:** Mailgun HTTP API — DO NOT use Gmail API or raw SMTP
-- **Analytics:** PostHog
-- **Geocoding / Autocomplete:** Google Maps API (`@react-google-maps/api`) — API key set in Vercel as `REACT_APP_GOOGLE_MAPS_API_KEY`. Falls back to plain text inputs when key is missing.
-- **Scheduled Jobs:** Vercel Cron Jobs (vercel.json) — replaces APScheduler
+- All `/api/*` requests are proxied by `vercel.json` to
+  `https://www.bookaride.co.nz/api/*` — shared Neon database, shared Stripe
+  account, shared pricing engine, shared emails/SMS.
+- **There is ONE admin and ONE dashboard for all sites**: bookaride.co.nz/admin.
+  `/admin` on this domain redirects there (see `vercel.json`). Drivers use the
+  bookaride.co.nz driver portal. Do not rebuild an admin, driver portal,
+  booking lookup or tracking page in this repo.
+- The booking page and the post-payment page are copied **verbatim** from the
+  bookaride.co.nz repo — never edit them here (see "Booking page mirror").
 
-### Why Single-Platform (No Separate Backend)
-- **Zero cold starts** — Vercel serverless functions are always warm
-- **One system to monitor** — no Render, no Docker, no second deploy pipeline
-- **Faster deployments** — push to main, everything deploys together
-- **Reduced errors** — no CORS cross-origin issues, no backend/frontend version mismatches
-- **Lower cost** — one platform instead of two
+### What was removed (September 2026)
+The private Vercel serverless API (`api/`: Neon, Stripe, Twilio, Mailgun,
+crons), its own pricing engine, and every page that depended on it (admin
+dashboard, cockpit, driver portal, customer tracking, flight tracker,
+My Booking, the old `BookingPage.jsx`). Create React App + craco were
+replaced by Vite. Do not reintroduce any of them.
 
-### What Was Removed
-- FastAPI (Python) backend on Render — **RETIRED**
-- Docker/Dockerfile — **RETIRED**
-- render.yaml — **RETIRED**
-- APScheduler — replaced by Vercel Cron Jobs
-- asyncpg — replaced by `@neondatabase/serverless` (designed for serverless)
+## Booking page mirror — NO DRIFT (owner rule)
 
-## The 10 Rules (MANDATORY — Every AI Session)
+The booking system must be **identical** on bookaride.co.nz, bookaridenz.com
+and this site. `frontend/scripts/sync-booking.mjs` holds the list of mirrored
+files (`pages/BookNow.jsx`, `pages/PaymentSuccess.jsx`, DateTimePicker,
+GoogleAddressInput, TrustBadges, LoadingSpinner, `lib/analytics.js`,
+`config/api.js`, and the shadcn ui primitives the page imports) and
+`frontend/scripts/booking-mirror.json` records the source commit plus a hash
+per file.
 
-> **These are the foundation of how this system is built and maintained. Non-negotiable.**
+- `npm run check:booking` runs automatically before every build and **fails
+  the build** if any mirrored file differs from the manifest.
+- To change anything on the booking page: make the change in the
+  bookaride.co.nz repo (`Book-A-Ride-Gap-Digital/BookARide`), merge it there,
+  then here run `cd frontend && npm run sync:booking -- <path-to-BookARide>`
+  (defaults to a sibling `../BookARide` checkout, or set `BOOKARIDE_SRC`),
+  commit the synced files + manifest, and ship.
+- Never "fix" a drift failure by editing the mirrored files on this side.
+- The mirrored page needs `src/config/siteConfig.js`, `src/components/SEO.jsx`
+  and `src/i18n.js` to exist with their current exports — keep them.
 
-| # | Rule | What It Means |
-|---|------|---------------|
-| 1 | **Scan Before You Build** | Every session starts by checking for security issues, broken code, and problems — BEFORE doing anything new. |
-| 2 | **Auto-Repair** | If you find a bug while working on anything, fix it immediately. No "that's out of scope" excuses. |
-| 3 | **Proactive Research** | Before building anything significant, check if there's a better library, technique, or approach. No guessing. |
-| 4 | **Engineering Gap Detection** | Systematically check for features that promise something the code can't deliver, missing error handling, security gaps. |
-| 5 | **Technology Currency** | Check if our tools are up to date. If there's a newer, faster, safer version — upgrade (within approved stack). |
-| 6 | **Explain Like You're Not A Developer** | All communication in plain English. "Your users were seeing X, now they see Y" — not tech jargon. |
-| 7 | **Never Leave It Worse** | Every file you touch gets cleaned up. No leaving messes behind. |
-| 8 | **Autonomous Testing** | After changes, verify everything still works. No "it should be fine". |
-| 9 | **Mandatory Documentation** | Every change gets documented so the next session knows what happened. |
-| 10 | **No Guessing** | If you don't know, research it. If you can't find the answer, ask the owner. Never assume. |
+## Architecture
 
-## Engineering Quality Rules (MANDATORY)
+- **Platform:** Vercel — static frontend, `/api/*` rewrite to bookaride.co.nz
+- **Frontend:** React 18 + Vite + Tailwind + shadcn/ui (`frontend/`)
+- **Routes:** `frontend/src/App.jsx`. Booking lives at `/book-now`
+  (`/booking` and `/pricing` redirect to it). Stripe returns customers to
+  `/payment-success`.
+- **Analytics:** PostHog snippet in `frontend/index.html`, plus the shared
+  platform's first-party `/api/track` beacon from the mirrored `analytics.js`.
+- **Address autocomplete:** server-side via the shared `/api/places/autocomplete`
+  — **never load Google Maps JS in the browser** and never add a Maps API key
+  to this site.
+- **Env vars:** none required. `VITE_BACKEND_URL` may point the booking page
+  at another API origin for local dev only. **Never** use `process.env.REACT_APP_*`.
 
-> **These rules enforce The 10 Rules at the code level.**
+## Standing workflow rules (owner-approved)
 
-### Proactive Bug Detection (Rules 1, 2, 4)
-1. **Before writing new code, scan for existing bugs** in files you're touching. Fix them.
-2. **Every function must have error handling.** No bare `try/catch` that silently swallows errors.
-3. **All user input must be validated and sanitized** before use in database queries, emails, or SMS.
-4. **HTML-escape all user-provided data** before inserting into email templates (prevent XSS/injection).
-
-### Security — Non-Negotiable (Rules 1, 4)
-5. **Never expose API keys, secrets, or tokens** in client-side code or git history.
-6. **JWT_SECRET_KEY must be a real environment variable** — never generate random secrets at runtime.
-7. **All admin endpoints must require authentication.** No exceptions.
-8. **Password reset tokens must have expiry validation** — check `expires_at` before allowing reset.
-9. **Rate limit sensitive endpoints** — booking creation, login attempts, SMS/email resend.
-
-### Performance (Rules 3, 5)
-10. **Add database indexes** on frequently queried columns (booking_ref, email, created_at, date).
-11. **Never SELECT * in list queries** — only select columns you need.
-12. **Use connection pooling** appropriate for the runtime (serverless = @neondatabase/serverless).
-
-### Frontend Reliability (Rules 2, 7, 8)
-13. **Every page component must be wrapped in an Error Boundary.** White screens are unacceptable.
-14. **All API calls must have loading states, error states, and retry logic.**
-15. **Phone number on every page must be 021 743 321.** Any other number is a bug — fix it immediately.
-
-### Code Quality (Rules 7, 9)
-16. **No dead code.** Remove unused imports, variables, and commented-out blocks.
-17. **No console.log in production.** Use proper error tracking or remove.
-18. **Consistent API response format:** `{ ok: true/false, data: ..., error: "..." }`
-19. **All dates stored in ISO 8601 UTC.** Display in NZ timezone on frontend only.
-
-### Build Verification (MANDATORY — No Exceptions)
-20. **Run `cd frontend && yarn build` after EVERY set of changes.** If it doesn't build, it doesn't get committed.
-21. **After build passes, run a full import/route crawl** — verify every page component loads, every import resolves, no undefined references.
-22. **No broken features on the live site.** If a feature doesn't work end-to-end, remove it or fix it. Never ship half-working code.
-23. **Test what you changed.** Don't just read the code — verify it compiles, verify the logic executes, verify the API endpoints respond.
-
-### Autonomous Operation (Rules 2, 3, 4, 10)
-24. **If you find a bug while working on something else, fix it.** Don't leave it for later.
-25. **If a dependency is outdated and has known vulnerabilities, flag it.**
-26. **If an engineering gap exists (missing validation, missing error handling, missing indexes), fix it on the spot.**
-27. **Never introduce a new technology or provider without explicit owner approval.** The stack is locked.
-
-## Important Rules for AI Sessions
-
-1. **Never invent contact details.** Use only the emails and phone numbers listed above. If you don't know a detail, ask — don't guess.
-2. **No contact form.** The site drives users to book directly. The Contact section is a booking CTA with phone/email, not a message form.
-3. **Don't create backup files.** Edit files in place.
-4. **Don't rename or reorganise files** without being asked.
-5. **Test changes** against existing patterns in the codebase before introducing new ones.
-6. **Never swap out the database or email provider.** The stack is Neon (PostgreSQL) + Mailgun. Do not introduce MongoDB, Firebase, Gmail API, SendGrid, or any other provider.
-7. **Never change business contact details** (phone, emails, website URL). These are listed above and must not be altered.
-8. **Phone number is 021 743 321.** Any other phone number (e.g., 021 123 4567) is wrong. Fix it if you see it.
+1. **Ship green, ship current.** When work is complete and the build passes,
+   push it and merge — do not leave approved work sitting unmerged.
+2. **Verify before merge**: `cd frontend && npm run build` must pass with zero
+   errors (this includes the mirror check).
+3. **Never change business contact details.** Phone is 021 743 321 everywhere;
+   any other number is a bug — fix it.
+4. **No contact form.** The Contact section is a booking CTA with phone/email.
+5. **Never introduce a backend, database, email/SMS provider, payment
+   provider or tracker** in this repo. Everything server-side lives in the
+   BookARide repo and is governed by its CLAUDE.md.
+6. Don't create backup files; edit in place. Don't rename or reorganise files
+   without being asked.
+7. Every page component stays wrapped in the app-level Error Boundary; white
+   screens are unacceptable.
 
 ## Key Files
 
-- `frontend/public/index.html` - SEO meta tags, JSON-LD schemas
-- `frontend/src/pages/HomePage.jsx` - Main landing page
-- `frontend/src/pages/BookingPage.jsx` - Booking form
-- `api/` - Vercel Serverless Functions (all API endpoints)
-- `api/lib/db.js` - Neon PostgreSQL connection (serverless)
-- `api/lib/email.js` - Mailgun email utilities
-- `api/lib/sms.js` - Twilio SMS utilities
-- `api/lib/pricing.js` - Pricing engine
-- `api/lib/auth.js` - JWT authentication
-- `api/bookings.js` - Booking CRUD endpoints
-- `api/admin/` - Admin dashboard API endpoints
-
-## Legacy Files (DELETED — March 2026)
-
-- `backend/` - Former FastAPI backend — **DELETED** (code lives in `api/_shared/`)
-- `Dockerfile` - Former Docker config — **DELETED**
-- `render.yaml` - Former Render config — **DELETED**
+- `vercel.json` — build command, `/api` proxy, redirects (`/admin` → shared dashboard)
+- `frontend/index.html` — SEO meta tags, JSON-LD schemas, PostHog
+- `frontend/src/App.jsx` — routes
+- `frontend/src/pages/HomePage.jsx` — landing page
+- `frontend/src/pages/BookNow.jsx` — **mirrored, do not edit**
+- `frontend/src/pages/PaymentSuccess.jsx` — **mirrored, do not edit**
+- `frontend/scripts/sync-booking.mjs` — mirror sync + drift check
+- `frontend/src/components/SEO.jsx`, `src/config/siteConfig.js`, `src/i18n.js`
+  — support files the mirrored page imports

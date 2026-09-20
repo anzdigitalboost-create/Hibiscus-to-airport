@@ -31,7 +31,7 @@ const Hero = () => {
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <Link
-                to="/booking"
+                to="/book-now"
                 className="inline-flex items-center justify-center bg-[#D4AF37] hover:bg-[#C4A030] text-white px-8 py-4 text-base font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
               >
                 Book Your Transfer
