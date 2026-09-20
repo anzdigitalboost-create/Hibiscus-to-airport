@@ -70,21 +70,31 @@ per file.
 - **Env vars:** none required. `VITE_BACKEND_URL` may point the booking page
   at another API origin for local dev only. **Never** use `process.env.REACT_APP_*`.
 
+## Shipping rule — ALWAYS PUSH & MERGE (owner rule, 2026-09-20)
+
+Production must always match the latest build. Work is **not finished** until
+it is merged to `main` and live on Vercel. In the same session, every time:
+
+1. Branch (`claude/<short-topic>`) → commit → push → open PR → squash-merge →
+   delete the branch. Never stop at "want me to open a PR?" or leave a PR
+   unmerged.
+2. **Verify before merge**: `cd frontend && npm run build` must pass with zero
+   errors (this includes the booking-mirror drift check).
+3. If `main` has moved, merge it into the branch and resolve conflicts, then
+   merge — never leave the branch behind `main`.
+4. After merging, confirm the deploy went live and report the merge commit SHA.
+
 ## Standing workflow rules (owner-approved)
 
-1. **Ship green, ship current.** When work is complete and the build passes,
-   push it and merge — do not leave approved work sitting unmerged.
-2. **Verify before merge**: `cd frontend && npm run build` must pass with zero
-   errors (this includes the mirror check).
-3. **Never change business contact details.** Phone is 021 743 321 everywhere;
+1. **Never change business contact details.** Phone is 021 743 321 everywhere;
    any other number is a bug — fix it.
-4. **No contact form.** The Contact section is a booking CTA with phone/email.
-5. **Never introduce a backend, database, email/SMS provider, payment
+2. **No contact form.** The Contact section is a booking CTA with phone/email.
+3. **Never introduce a backend, database, email/SMS provider, payment
    provider or tracker** in this repo. Everything server-side lives in the
    BookARide repo and is governed by its CLAUDE.md.
-6. Don't create backup files; edit in place. Don't rename or reorganise files
+4. Don't create backup files; edit in place. Don't rename or reorganise files
    without being asked.
-7. Every page component stays wrapped in the app-level Error Boundary; white
+5. Every page component stays wrapped in the app-level Error Boundary; white
    screens are unacceptable.
 
 ## Key Files
