@@ -7,6 +7,8 @@ const { escapeHtml, formatDateWithDay } = require("./helpers");
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 const SENDER_NAME = "Hibiscus to Airport";
+// Fixed business address (see CLAUDE.md). Every new booking notification goes here.
+const BOOKING_ADMIN_EMAIL = "bookings@bookaride.co.nz";
 
 /**
  * Send email via the Resend HTTP API.
@@ -145,7 +147,7 @@ function sendCustomerConfirmation(booking) {
  * Send admin notification email for new booking.
  */
 function sendAdminNotification(booking) {
-  const adminEmail = process.env.ADMIN_EMAIL || "bookings@bookaride.co.nz";
+  const adminEmail = BOOKING_ADMIN_EMAIL;
   const ref = escapeHtml(booking.booking_ref || booking.bookingRef || "N/A");
   const name = escapeHtml(booking.name);
   const phone = escapeHtml(booking.phone);
