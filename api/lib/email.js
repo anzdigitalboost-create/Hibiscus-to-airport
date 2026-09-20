@@ -16,7 +16,7 @@ const BOOKING_ADMIN_EMAIL = "bookings@bookaride.co.nz";
  */
 async function sendEmail(to, subject, htmlBody) {
   const apiKey = process.env.RESEND_API_KEY;
-  const senderEmail = process.env.SENDER_EMAIL || "noreply@bookaride.co.nz";
+  const senderEmail = process.env.SENDER_EMAIL || "noreply@hibiscustoairport.co.nz";
 
   if (!apiKey) {
     console.error("Resend not configured (set RESEND_API_KEY)");

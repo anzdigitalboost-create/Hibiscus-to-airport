@@ -7,7 +7,7 @@
 - **Phone:** 021 743 321 (international: +64-21-743-321)
 - **Customer-facing Email:** info@bookaride.co.nz (shown on website)
 - **Booking Admin Email:** bookings@bookaride.co.nz (where booking notifications go)
-- **Sender Email (from):** noreply@bookaride.co.nz (outgoing emails sent from this address)
+- **Sender Email (from):** noreply@hibiscustoairport.co.nz (outgoing emails sent from this address via Resend; domain verified in Resend, September 2026)
 - **Service Area:** Hibiscus Coast (Orewa, Whangaparaoa, Silverdale, Red Beach, Gulf Harbour, Stanmore Bay) to Auckland Airport
 - **Hours:** 24/7 including public holidays
 - **Currency:** NZD
