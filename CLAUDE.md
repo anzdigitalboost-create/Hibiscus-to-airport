@@ -113,6 +113,7 @@
 6. **Never swap out the database or email provider.** The stack is Neon (PostgreSQL) + Mailgun. Do not introduce MongoDB, Firebase, Gmail API, SendGrid, or any other provider.
 7. **Never change business contact details** (phone, emails, website URL). These are listed above and must not be altered.
 8. **Phone number is 021 743 321.** Any other phone number (e.g., 021 123 4567) is wrong. Fix it if you see it.
+9. **Always push and merge to keep production current (OWNER-APPROVED).** Once changes build cleanly (Rule 20), commit, push, and merge the PR into `main` in the same session — do not leave finished work sitting unmerged on a branch. Production deploys from `main`, so unmerged work is invisible to customers. Only hold off merging if the build fails, CI is red, or the change is knowingly incomplete.
 
 ## Key Files
 
