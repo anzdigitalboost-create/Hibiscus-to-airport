@@ -1,6 +1,6 @@
-// GET /api/bookings/:ref — Fetch booking by reference or ID
-// PUT /api/bookings/:ref — Update booking (admin)
-// DELETE /api/bookings/:ref — Soft-delete booking (admin)
+// GET /api/bookings/:id — Fetch booking by reference or ID
+// PUT /api/bookings/:id — Update booking (admin)
+// DELETE /api/bookings/:id — Soft-delete booking (admin)
 
 const { getDb } = require("../lib/db");
 const { authenticateRequest } = require("../lib/auth");
@@ -10,7 +10,9 @@ const {
 } = require("../lib/helpers");
 
 module.exports = async function handler(req, res) {
-  const { ref } = req.query;
+  // Segment is named [id] to match api/bookings/[id]/* (Vercel requires one name per level).
+  // The value may be a booking_ref (e.g. H123) or a UUID; lookups try both.
+  const { id: ref } = req.query;
 
   if (req.method === "GET") return getBooking(req, res, ref);
   if (req.method === "PUT") return updateBooking(req, res, ref);
