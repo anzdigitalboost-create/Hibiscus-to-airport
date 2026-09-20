@@ -110,6 +110,37 @@ function sendReminderSms(booking) {
 }
 
 /**
+ * Send job dispatch SMS to a driver, with a link to accept/decline.
+ */
+function sendDriverJobAlert(driver, booking, token) {
+  const frontendUrl = process.env.FRONTEND_URL || "https://hibiscustoairport.co.nz";
+  const ref = booking.booking_ref || "N/A";
+  const formattedDate = formatDateNz(booking.date);
+  const payout = booking.driver_payout != null ? Number(booking.driver_payout).toFixed(2) : "0.00";
+  const pickup = (booking.pickup_address || "").slice(0, 60);
+  const link = `${frontendUrl}/driver/job/${booking.id}?token=${token}`;
+
+  const message = `NEW JOB - Hibiscus to Airport\nRef: ${ref}\n${formattedDate} at ${booking.time}\nPickup: ${pickup}\nPayout: $${payout}\n\nAccept/decline: ${link}`;
+
+  return sendSms(driver.phone, message);
+}
+
+/**
+ * Notify admin that a driver accepted or declined a job.
+ */
+function sendDriverResponseAdminSms(booking, driverName, accepted, declineReason) {
+  const adminPhone = process.env.ADMIN_PHONE;
+  if (!adminPhone) return Promise.resolve(false);
+
+  const ref = booking.booking_ref || "N/A";
+  const message = accepted
+    ? `DRIVER ACCEPTED\nRef: ${ref}\nDriver: ${driverName}\n${formatDateNz(booking.date)} at ${booking.time}`
+    : `DRIVER DECLINED\nRef: ${ref}\nDriver: ${driverName}\nReason: ${declineReason || "No reason given"}\n\nPlease reassign this job.`;
+
+  return sendSms(adminPhone, message);
+}
+
+/**
  * Send urgent booking alert SMS to admin.
  */
 function sendUrgentAdminSms(booking, hoursUntil) {
@@ -132,4 +163,6 @@ module.exports = {
   sendCancellationSms,
   sendReminderSms,
   sendUrgentAdminSms,
+  sendDriverJobAlert,
+  sendDriverResponseAdminSms,
 };

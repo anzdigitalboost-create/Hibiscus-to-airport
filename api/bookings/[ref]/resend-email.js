@@ -7,7 +7,7 @@ const { ok, notFound, tooManyRequests, serverError, methodNotAllowed, rowToBooki
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") return methodNotAllowed(res, ["POST"]);
 
-  const { id } = req.query;
+  const { ref: id } = req.query;
   const force = req.query.force === "true";
 
   try {
