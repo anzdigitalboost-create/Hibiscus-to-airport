@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
     }
 
     const sent = await sendCustomerConfirmation(booking);
-    if (!sent) return serverError(res, "Failed to send email — check Mailgun configuration");
+    if (!sent) return serverError(res, "Failed to send email — check Resend configuration");
 
     await sql`UPDATE bookings SET last_email_sent = ${new Date().toISOString()} WHERE id = ${id}`;
 

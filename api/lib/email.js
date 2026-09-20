@@ -1,43 +1,51 @@
 // api/lib/email.js
-// Mailgun HTTP API email sender for Vercel Serverless Functions
-// DO NOT replace with Gmail API, SendGrid, or raw SMTP
+// Resend HTTP API email sender for Vercel Serverless Functions
+// Owner-approved provider (September 2026). DO NOT replace with Gmail API,
+// SendGrid, Mailgun, or raw SMTP.
 
 const { escapeHtml, formatDateWithDay } = require("./helpers");
 
+const RESEND_API_URL = "https://api.resend.com/emails";
+const SENDER_NAME = "Hibiscus to Airport";
+
 /**
- * Send email via Mailgun HTTP API.
+ * Send email via the Resend HTTP API.
+ * Returns true on success, false on any failure (never throws).
  */
 async function sendEmail(to, subject, htmlBody) {
-  const apiKey = process.env.MAILGUN_API_KEY;
-  const domain = process.env.MAILGUN_DOMAIN;
+  const apiKey = process.env.RESEND_API_KEY;
   const senderEmail = process.env.SENDER_EMAIL || "noreply@bookaride.co.nz";
 
-  if (!apiKey || !domain) {
-    console.error("Mailgun not configured (set MAILGUN_API_KEY and MAILGUN_DOMAIN)");
+  if (!apiKey) {
+    console.error("Resend not configured (set RESEND_API_KEY)");
+    return false;
+  }
+  if (!to || typeof to !== "string" || !to.includes("@")) {
+    console.error("Email send skipped: invalid recipient");
     return false;
   }
 
-  const formData = new URLSearchParams();
-  formData.append("from", senderEmail);
-  formData.append("to", to);
-  formData.append("subject", subject);
-  formData.append("html", `<html><body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">${htmlBody}</body></html>`);
+  const payload = {
+    from: `${SENDER_NAME} <${senderEmail}>`,
+    to: [to],
+    subject,
+    html: `<html><body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">${htmlBody}</body></html>`,
+  };
 
   try {
-    const response = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
+    const response = await fetch(RESEND_API_URL, {
       method: "POST",
       headers: {
-        Authorization: "Basic " + Buffer.from(`api:${apiKey}`).toString("base64"),
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify(payload),
     });
 
-    if (response.ok) {
-      console.log(`Email sent to ${to}`);
-      return true;
-    }
+    if (response.ok) return true;
+
     const text = await response.text();
-    console.error(`Mailgun error (${response.status}): ${text}`);
+    console.error(`Resend error (${response.status}): ${text}`);
     return false;
   } catch (err) {
     console.error(`Email send error: ${err.message}`);

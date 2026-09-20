@@ -22,7 +22,7 @@
 - **Database:** Neon (PostgreSQL) via `@neondatabase/serverless` — DO NOT use MongoDB
 - **Payments:** Stripe (Node.js SDK)
 - **SMS:** Twilio (Node.js SDK)
-- **Email:** Mailgun HTTP API — DO NOT use Gmail API or raw SMTP
+- **Email:** Resend HTTP API (owner-approved switch from Mailgun, September 2026) — DO NOT use Gmail API, Mailgun, SendGrid or raw SMTP
 - **Analytics:** PostHog
 - **Geocoding / Autocomplete:** Google Maps API (`@react-google-maps/api`) — API key set in Vercel as `REACT_APP_GOOGLE_MAPS_API_KEY`. Falls back to plain text inputs when key is missing.
 - **Scheduled Jobs:** Vercel Cron Jobs (vercel.json) — replaces APScheduler
@@ -39,6 +39,7 @@
 - Docker/Dockerfile — **RETIRED**
 - render.yaml — **RETIRED**
 - APScheduler — replaced by Vercel Cron Jobs
+- Mailgun — replaced by Resend (September 2026); env vars `MAILGUN_API_KEY`/`MAILGUN_DOMAIN` are no longer read
 - asyncpg — replaced by `@neondatabase/serverless` (designed for serverless)
 
 ## The 10 Rules (MANDATORY — Every AI Session)
@@ -110,7 +111,7 @@
 3. **Don't create backup files.** Edit files in place.
 4. **Don't rename or reorganise files** without being asked.
 5. **Test changes** against existing patterns in the codebase before introducing new ones.
-6. **Never swap out the database or email provider.** The stack is Neon (PostgreSQL) + Mailgun. Do not introduce MongoDB, Firebase, Gmail API, SendGrid, or any other provider.
+6. **Never swap out the database or email provider.** The stack is Neon (PostgreSQL) + Resend. Do not introduce MongoDB, Firebase, Gmail API, Mailgun, SendGrid, or any other provider.
 7. **Never change business contact details** (phone, emails, website URL). These are listed above and must not be altered.
 8. **Phone number is 021 743 321.** Any other phone number (e.g., 021 123 4567) is wrong. Fix it if you see it.
 
@@ -121,7 +122,7 @@
 - `frontend/src/pages/BookingPage.jsx` - Booking form
 - `api/` - Vercel Serverless Functions (all API endpoints)
 - `api/lib/db.js` - Neon PostgreSQL connection (serverless)
-- `api/lib/email.js` - Mailgun email utilities
+- `api/lib/email.js` - Resend email utilities
 - `api/lib/sms.js` - Twilio SMS utilities
 - `api/lib/pricing.js` - Pricing engine
 - `api/lib/auth.js` - JWT authentication
