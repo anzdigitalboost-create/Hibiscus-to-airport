@@ -83,7 +83,7 @@ const NorthShoreAirportShuttle = () => {
           <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
             Private, door-to-door airport transfers from every North Shore suburb. Flat rates, professional drivers, and 24/7 availability — including early morning and late night flights.
           </p>
-          <Link to="/booking">
+          <Link to="/book-now">
             <Button className="bg-gold hover:bg-amber-500 text-black font-bold text-lg px-8 py-6">
               Book Your North Shore Airport Transfer
             </Button>
@@ -265,7 +265,7 @@ const NorthShoreAirportShuttle = () => {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Flat rates, professional drivers, and door-to-door service from any North Shore suburb. Book online in under two minutes.
           </p>
-          <Link to="/booking">
+          <Link to="/book-now">
             <Button className="bg-gold hover:bg-amber-500 text-black font-bold text-lg px-10 py-6">
               Book Your North Shore Airport Transfer
             </Button>

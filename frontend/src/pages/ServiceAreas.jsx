@@ -112,7 +112,7 @@ const ServiceAreas = () => {
           <p className="text-xl text-gray-300 mb-8">
             All our routes utilize the Northern Busway for faster, more reliable airport transfers. Skip the motorway traffic and arrive on time, every time.
           </p>
-          <a href="/booking">
+          <a href="/book-now">
             <Button className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
               Book Your Transfer Now
               <ArrowRight className="ml-2 w-5 h-5" />

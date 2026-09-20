@@ -37,11 +37,8 @@ const Header = () => {
             <Link to="/faq" className="text-[#64748B] hover:text-[#1E293B] transition-colors text-sm font-medium">
               FAQ
             </Link>
-            <Link to="/my-booking" className="text-[#64748B] hover:text-[#1E293B] transition-colors text-sm font-medium">
-              My Booking
-            </Link>
             <Link
-              to="/booking"
+              to="/book-now"
               className="bg-[#D4AF37] hover:bg-[#C4A030] text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
             >
               Book Now
@@ -66,7 +63,6 @@ const Header = () => {
             {[
               { to: '/service-areas', label: 'Service Areas' },
               { to: '/faq', label: 'FAQ' },
-              { to: '/my-booking', label: 'My Booking' },
             ].map(({ to, label }) => (
               <Link
                 key={to}
@@ -79,7 +75,7 @@ const Header = () => {
             ))}
             <div className="pt-2 border-t border-[#E2E8F0]">
               <Link
-                to="/booking"
+                to="/book-now"
                 className="block w-full text-center bg-[#D4AF37] hover:bg-[#C4A030] text-white py-3 px-6 rounded-lg font-semibold"
                 onClick={() => setMobileMenuOpen(false)}
               >

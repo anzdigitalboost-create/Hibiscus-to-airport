@@ -72,7 +72,7 @@ const HomePage = () => {
             Private ride. Professional driver. Price calculated by distance — get an instant quote when you book.
           </p>
           <Link
-            to="/booking"
+            to="/book-now"
             className="inline-flex items-center bg-[#D4AF37] hover:bg-[#C4A030] text-white px-10 py-4 text-lg font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
           >
             Book Now

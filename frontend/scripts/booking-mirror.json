@@ -1,0 +1,23 @@
+{
+  "source": {
+    "repo": "Book-A-Ride-Gap-Digital/BookARide",
+    "commit": "0de9eee18b4e7e32e84cc6de5988bb5c72b621ce",
+    "syncedAt": "2026-09-20T17:15:45.487Z"
+  },
+  "files": {
+    "pages/BookNow.jsx": "ccc98e6d484426e61496e1bab85d42abdcde9a6ae7e3d4e1c60eb300aa7b71fe",
+    "pages/PaymentSuccess.jsx": "58f61524faf02fc2efa020f2ddb9c95ef82ccaed96183b7fd36170fa3a93ba07",
+    "components/DateTimePicker.jsx": "50c833aec23075303180ba473d8c436ca2eb1885a7bd8bbac1ed9d6c2fb72767",
+    "components/GoogleAddressInput.jsx": "180d8cc3728878668dc0dccbc0e2114a8668ee81a6fffc981fcf3a39a11a6ed4",
+    "components/TrustBadges.jsx": "24163053ff54ca29c705cd53ecb35eb7a218acda3865e77b5adcc93fda50ae9c",
+    "components/LoadingSpinner.jsx": "4f223819510360d103b2146788e518b75676b71b9cf14dfd88b2f742f4ce1671",
+    "lib/analytics.js": "c58f8d19c27c6546b375295e8596a14c01553fd8428268cdb56ee29dfda8b4bb",
+    "config/api.js": "40384e9609b2ee209be0d0c61ec53fd5e60c8d95cc4005d71eda0994a7ad748d",
+    "components/ui/button.jsx": "e933a3f77c7ed8bf7186ca1fc049b940bd1e80e75b34eb9853dbb9fae7af9a47",
+    "components/ui/input.jsx": "7c9f0c756530ae1dbe3b1424f09e32e3f54323826b2f2d817b13c865f96309ad",
+    "components/ui/label.jsx": "37c6425d2a5c798ade4e60f89f86054d703433a8977e12d796de2b5bb4e3d0b7",
+    "components/ui/select.jsx": "7af3e0eae1f6bce9abeccc71c2f168bd807c59b3bbbf1f66cddd2b2eafa24c7b",
+    "components/ui/textarea.jsx": "6b2c6dd8023a32be3b52af960d7615018488c5601fb05cec97ed76d1141ae2f4",
+    "components/ui/card.jsx": "8ab6f42e722e9c51752ce2f14aabb2696bddc0b6818041fb8f313f670955c2c4"
+  }
+}

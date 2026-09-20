@@ -10,7 +10,7 @@
   </url>
 
   <url>
-    <loc>https://hibiscustoairport.co.nz/booking</loc>
+    <loc>https://hibiscustoairport.co.nz/book-now</loc>
     <lastmod>2026-04-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -394,11 +394,6 @@
     <priority>0.8</priority>
   </url>
 
-  <url>
-    <loc>https://hibiscustoairport.co.nz/my-booking</loc>
-    <lastmod>2026-04-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 
   <url>

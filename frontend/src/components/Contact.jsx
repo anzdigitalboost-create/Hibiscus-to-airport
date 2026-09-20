@@ -24,7 +24,7 @@ const Contact = () => {
           {/* Booking CTA */}
           <div className="text-center lg:text-left space-y-6">
             <Button
-              onClick={() => navigate('/booking')}
+              onClick={() => navigate('/book-now')}
               className="w-full sm:w-auto bg-gradient-to-r from-[#1B2B4B] to-[#2D4A7A] hover:from-[#162340] hover:to-[#264068] text-white py-6 px-12 text-lg font-semibold tracking-wide shadow-sm"
             >
               Book Now
