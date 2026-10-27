@@ -14,7 +14,6 @@ import axios from 'axios';
 import SEO from '../components/SEO';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { CustomDatePicker, CustomTimePicker } from '../components/DateTimePicker';
-import TrustBadges from '../components/TrustBadges';
 import GoogleAddressInput from '../components/GoogleAddressInput';
 import { API } from '../config/api';
 import { trackEvent, getAttribution } from '../lib/analytics';
@@ -34,6 +33,7 @@ export const BookNow = () => {
     date: '',
     time: '',
     passengers: '1',
+    vehicleType: 'seven-seat',
     vipAirportPickup: false,
     oversizedLuggage: false,
     cabinBags: 0,
@@ -110,12 +110,17 @@ export const BookNow = () => {
     oversizedLuggageFee: 0,
     childSeatFee: 0,
     passengerFee: 0,
+    vehicleFee: 0,
+    vehicleType: 'seven-seat',
     stripeFee: 0,
     subtotal: 0,
     totalPrice: 0,
     fareVersion: null,
     calculating: false
   });
+
+  const [vehicleQuotes, setVehicleQuotes] = useState({});
+  const [availabilityError, setAvailabilityError] = useState('');
 
   // NOTE: the promo code UI was removed deliberately. /api/validate-promo
   // returned a discount and the page told the customer "You saved $X", but the
@@ -134,6 +139,28 @@ export const BookNow = () => {
     { value: 'private-transfer', label: 'Private Transfer' }
   ];
 
+  const passengerCount = parseInt(formData.passengers, 10) || 1;
+  const checkedBagCount = parseInt(formData.checkedBags, 10) || 0;
+  const canChooseVehicle = passengerCount <= 3 && checkedBagCount <= 3;
+  const vehicleLabels = {
+    'five-seat': '5 Seats',
+    'seven-seat': '7 Seats',
+    'twelve-seat': '12 Seats'
+  };
+
+  useEffect(() => {
+    const automaticVehicle = passengerCount >= 6
+      ? 'twelve-seat'
+      : (passengerCount >= 4 || checkedBagCount > 3 ? 'seven-seat' : null);
+    if (automaticVehicle) {
+      setFormData(prev => prev.vehicleType === automaticVehicle
+        ? prev
+        : { ...prev, vehicleType: automaticVehicle });
+    } else if (!['five-seat', 'seven-seat'].includes(formData.vehicleType)) {
+      setFormData(prev => ({ ...prev, vehicleType: 'seven-seat' }));
+    }
+  }, [passengerCount, checkedBagCount, formData.vehicleType]);
+
   // Calculate price when key fields change
   const priceCalcRef = useRef(0); // Guard against stale API responses
   const priceCalcTimerRef = useRef(null);
@@ -146,7 +173,7 @@ export const BookNow = () => {
       }, 400);
     }
     return () => clearTimeout(priceCalcTimerRef.current);
-  }, [formData.pickupAddress, formData.dropoffAddress, formData.passengers, formData.serviceType, formData.returnDate, formData.returnTime, formData.vipAirportPickup, formData.oversizedLuggage, formData.cabinBags, formData.checkedBags, formData.oversizedLuggageCount, formData.childSeats, formData.boosterSeats, formData.goldCard]);
+  }, [formData.pickupAddress, formData.dropoffAddress, formData.passengers, formData.serviceType, formData.date, formData.returnDate, formData.returnTime, formData.vipAirportPickup, formData.oversizedLuggage, formData.cabinBags, formData.checkedBags, formData.oversizedLuggageCount, formData.childSeats, formData.boosterSeats, formData.goldCard, formData.vehicleType]);
 
   const calculatePrice = async () => {
     const requestId = ++priceCalcRef.current;
@@ -154,8 +181,11 @@ export const BookNow = () => {
 
     try {
       const hasReturnTrip = !!(formData.returnDate && formData.returnTime);
-      const response = await axios.post(`${API}/calculate-price`, {
+      const quoteRequest = {
         serviceType: formData.serviceType,
+        vehicleType: formData.vehicleType,
+        date: formData.date,
+        returnDate: formData.returnDate,
         pickupAddress: formData.pickupAddress,
         dropoffAddress: formData.dropoffAddress,
         passengers: parseInt(formData.passengers) || 1,
@@ -168,12 +198,29 @@ export const BookNow = () => {
         boosterSeats: formData.boosterSeats,
         goldCard: formData.goldCard,
         bookReturn: hasReturnTrip
-      }, { timeout: 12000 });
+      };
+      const alternativeVehicle = formData.vehicleType === 'seven-seat' ? 'five-seat' : 'seven-seat';
+      const [response, alternativeResponse] = await Promise.all([
+        axios.post(API + '/calculate-price', quoteRequest, { timeout: 12000 }),
+        canChooseVehicle
+          ? axios.post(API + '/calculate-price', { ...quoteRequest, vehicleType: alternativeVehicle }, { timeout: 12000 })
+          : Promise.resolve(null)
+      ]);
 
       // Discard stale response if a newer request was fired
       if (requestId !== priceCalcRef.current) return;
 
       const data = response.data;
+      setAvailabilityError('');
+      if (canChooseVehicle) {
+        const alternativeData = alternativeResponse?.data;
+        setVehicleQuotes({
+          [formData.vehicleType]: data,
+          ...(alternativeData ? { [alternativeVehicle]: alternativeData } : {})
+        });
+      } else {
+        setVehicleQuotes({});
+      }
       setPricing({
         distance: data.distance,
         basePrice: data.basePrice,
@@ -181,6 +228,8 @@ export const BookNow = () => {
         oversizedLuggageFee: data.oversizedLuggageFee,
         childSeatFee: data.childSeatFee,
         passengerFee: data.passengerFee,
+        vehicleFee: data.vehicleFee || 0,
+        vehicleType: data.vehicleType || formData.vehicleType,
         stripeFee: data.stripeFee ?? Math.round(((data.subtotal * 0.029) + 0.30) * 100) / 100,
         subtotal: data.subtotal,
         totalPrice: data.totalPrice,
@@ -193,8 +242,12 @@ export const BookNow = () => {
     } catch (error) {
       if (requestId !== priceCalcRef.current) return;
       console.error('Error calculating price:', error);
-      setPricing(prev => ({ ...prev, calculating: false }));
-      toast.error('Unable to calculate distance. Please check addresses.');
+      const unavailable = error.response?.data?.code === 'VEHICLE_UNAVAILABLE'
+        ? error.response.data.detail
+        : '';
+      setAvailabilityError(unavailable);
+      setPricing(prev => ({ ...prev, calculating: false, totalPrice: unavailable ? 0 : prev.totalPrice }));
+      toast.error(unavailable || 'Unable to calculate distance. Please check addresses.');
     }
   };
 
@@ -218,6 +271,7 @@ export const BookNow = () => {
     if (!formData.pickupAddress || !formData.dropoffAddress) { toast.error('Please enter both pickup and drop-off addresses'); return; }
     if (!formData.date || !formData.time) { toast.error('Please select pickup date and time'); return; }
     if (!formData.name || !formData.email || !formData.phone) { toast.error('Please fill in all contact information'); return; }
+    if (availabilityError) { toast.error(availabilityError); return; }
 
     // Validate return trip fields
     const hasReturnTrip = !!(formData.returnDate && formData.returnTime);
@@ -541,26 +595,7 @@ export const BookNow = () => {
                             ))}
                           </SelectContent>
                         </Select>
-                        <p className="text-xs text-gray-500 mt-1">1st passenger included. 2nd passenger +$10; groups of 3 or more +$15 per additional passenger</p>
-                      </div>
-
-                      {/* VIP Parking Service */}
-                      <div className="mb-6 bg-gold/5 p-4 rounded-lg border border-gold/20">
-                        <div className="flex items-start space-x-3">
-                          <input
-                            type="checkbox"
-                            id="vipAirportPickup"
-                            checked={formData.vipAirportPickup}
-                            onChange={(e) => setFormData(prev => ({ ...prev, vipAirportPickup: e.target.checked }))}
-                            className="w-4 h-4 text-gold border-gray-300 rounded focus:ring-gold mt-1"
-                          />
-                          <div className="flex-1">
-                            <Label htmlFor="vipAirportPickup" className="cursor-pointer font-semibold text-gray-900">
-                              VIP Parking Service - $15
-                            </Label>
-                            <p className="text-xs text-gray-600 mt-1">Driver meets you outside door eleven</p>
-                          </div>
-                        </div>
+                        <p className="text-xs text-gray-500 mt-1">The quote automatically selects a vehicle for the group size. Larger vehicles include ordinary checked luggage.</p>
                       </div>
 
                       {/* Luggage — quantities so we can size the vehicle */}
@@ -611,9 +646,9 @@ export const BookNow = () => {
 
                       {/* Child restraints */}
                       <div className="mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
-                        <Label className="font-semibold text-gray-900">Child seats — $10 each</Label>
+                        <Label className="font-semibold text-gray-900">Child seats — Free</Label>
                         <p className="text-xs text-gray-600 mt-1 mb-3">
-                          Fitted by your driver. NZ law requires an approved restraint for children under 7.
+                          Provided free of charge and fitted by your driver. NZ law requires an approved restraint for children under 7.
                         </p>
                         <div className="grid grid-cols-2 gap-3">
                           {[
@@ -862,6 +897,47 @@ export const BookNow = () => {
                         </div>
                       ) : pricing.totalPrice > 0 ? (
                         <div className="space-y-4">
+                          {canChooseVehicle ? (
+                            <div className="rounded-xl border border-gold/30 bg-gold/5 p-4">
+                              <p className="font-semibold text-gray-900 mb-1">Choose your vehicle</p>
+                              <p className="text-xs text-gray-600 mb-3">
+                                Prices start from {vehicleQuotes['five-seat'] ? '$' + vehicleQuotes['five-seat'].totalPrice.toFixed(2) : 'the standard fare'}. 7 Seats is selected by default.
+                              </p>
+                              <div className="grid grid-cols-1 gap-3">
+                                {[
+                                  { value: 'five-seat', title: '5 Seats', note: '1–3 passengers · up to 3 checked bags' },
+                                  { value: 'seven-seat', title: '7 Seats', note: 'Recommended · more room · ordinary luggage included' },
+                                ].map(option => {
+                                  const optionQuote = vehicleQuotes[option.value];
+                                  return (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      onClick={() => handleSelectChange('vehicleType', option.value)}
+                                      className={'w-full text-left rounded-xl border-2 bg-white p-4 transition-colors ' + (formData.vehicleType === option.value ? 'border-gold ring-2 ring-gold/20' : 'border-gray-200 hover:border-gold/60')}
+                                    >
+                                      <span className="flex items-center justify-between gap-3">
+                                        <span>
+                                          <span className="block font-semibold text-gray-900">{option.title}</span>
+                                          <span className="block text-xs text-gray-600 mt-1">{option.note}</span>
+                                        </span>
+                                        <span className="text-lg font-bold text-gold">
+                                          {optionQuote ? '$' + optionQuote.totalPrice.toFixed(2) : '—'}
+                                        </span>
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="rounded-xl border border-gold/30 bg-gold/5 p-4">
+                              <p className="text-xs text-gray-600">Vehicle selected for your group</p>
+                              <p className="font-semibold text-gray-900">{vehicleLabels[pricing.vehicleType || formData.vehicleType]}</p>
+                              <p className="text-xs text-gray-600 mt-1">Ordinary checked luggage is included.</p>
+                            </div>
+                          )}
+
                           <div className="text-center py-6">
                             <p className="text-gray-600 mb-2">Your Quote</p>
                             <span className="text-5xl font-bold text-gold">${finalTotal.toFixed(2)}</span>
@@ -890,7 +966,7 @@ export const BookNow = () => {
 
                           <div className="bg-gray-50 rounded-lg p-4 text-center">
                             <p className="text-sm text-gray-600">
-                              {formData.passengers} passenger{parseInt(formData.passengers) > 1 ? 's' : ''}
+                              {formData.passengers} passenger{parseInt(formData.passengers) > 1 ? 's' : ''} · {vehicleLabels[pricing.vehicleType || formData.vehicleType]}
                               {(formData.returnDate && formData.returnTime) && ' · Return trip (both ways included)'}
                             </p>
                           </div>
@@ -905,6 +981,11 @@ export const BookNow = () => {
                           )}
 
                         </div>
+                      ) : availabilityError ? (
+                        <div className="text-center py-8 rounded-xl border border-red-200 bg-red-50 px-4">
+                          <p className="font-semibold text-red-700">Not available</p>
+                          <p className="text-sm text-red-600 mt-2">{availabilityError}</p>
+                        </div>
                       ) : (
                         <div className="text-center py-8">
                           <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
@@ -915,10 +996,6 @@ export const BookNow = () => {
                           </p>
                         </div>
                       )}
-
-                      <div className="mt-6">
-                        <TrustBadges variant="payment" />
-                      </div>
 
                       {/* Secure Payment Info — card marks are inline SVG, never
                           hotlinked: the Wikimedia logos this used to load are
