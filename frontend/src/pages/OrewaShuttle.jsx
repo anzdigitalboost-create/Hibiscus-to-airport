@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { ArrowRight, MapPin, Clock, DollarSign, Zap, Shield } from 'lucide-react';
 import Header from '../components/Header';
@@ -39,12 +40,16 @@ const OrewaShuttle = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button className="bg-gold hover:bg-amber-500 text-black px-8 py-6 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
-                Book Your Orewa Transfer
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button asChild className="bg-gold hover:bg-amber-500 text-black px-8 py-6 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
+                <Link to="/book-now">
+                  Book Your Orewa Transfer
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </Button>
-              <Button variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-8 py-6 text-lg font-semibold">
-                Get Instant Quote
+              <Button asChild variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-8 py-6 text-lg font-semibold">
+                <Link to="/book-now">
+                  Get Instant Quote
+                </Link>
               </Button>
             </div>
             
@@ -155,9 +160,11 @@ const OrewaShuttle = () => {
           <p className="text-xl text-gray-300 mb-8">
             Experience the fastest route from Orewa to Auckland Airport via Northern Busway Express
           </p>
-          <Button className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
-            Book Now - Orewa Service
-            <ArrowRight className="ml-2 w-5 h-5" />
+          <Button asChild className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
+            <Link to="/book-now">
+              Book Now - Orewa Service
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
           </Button>
         </div>
       </section>

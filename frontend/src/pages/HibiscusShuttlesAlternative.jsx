@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -282,11 +283,15 @@ const HibiscusShuttlesAlternative = () => {
               Experience the difference with professional service, modern technology, and guaranteed reliability
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
-                Book Your First Premium Transfer
+              <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
+                <Link to="/book-now">
+                  Book Your First Premium Transfer
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg">
-                Compare Services & Pricing
+              <Button asChild size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg">
+                <Link to="/book-now">
+                  Compare Services & Pricing
+                </Link>
               </Button>
             </div>
           </div>

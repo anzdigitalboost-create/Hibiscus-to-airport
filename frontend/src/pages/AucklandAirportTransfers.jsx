@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -24,8 +25,10 @@ const AucklandAirportTransfers = () => {
           <p className="text-xl text-gray-200 mb-8">
             Professional transfers to and from Auckland International Airport
           </p>
-          <Button className="bg-gold hover:bg-amber-500 text-black font-bold text-lg px-8 py-6">
-            Book Airport Transfer Now
+          <Button asChild className="bg-gold hover:bg-amber-500 text-black font-bold text-lg px-8 py-6">
+            <Link to="/book-now">
+              Book Airport Transfer Now
+            </Link>
           </Button>
         </div>
       </section>

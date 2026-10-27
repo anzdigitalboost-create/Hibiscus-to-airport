@@ -4,6 +4,7 @@
   "redirects": [
     { "source": "/pricing", "destination": "/book-now", "permanent": true },
     { "source": "/booking", "destination": "/book-now", "permanent": true },
+    { "source": "/terms-and-conditions", "destination": "https://www.bookaride.co.nz/terms-and-conditions", "permanent": false },
     { "source": "/admin", "destination": "https://www.bookaride.co.nz/admin", "permanent": false },
     { "source": "/admin/:path*", "destination": "https://www.bookaride.co.nz/admin/:path*", "permanent": false }
   ],

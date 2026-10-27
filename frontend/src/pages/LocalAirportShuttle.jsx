@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -249,8 +250,10 @@ const LocalAirportShuttle = () => {
             <p className="text-black/80 mb-6">
               Choose local expertise, community support, and premium service all in one
             </p>
-            <Button size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
-              Book Your Local Airport Transfer
+            <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Book Your Local Airport Transfer
+              </Link>
             </Button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -26,11 +27,15 @@ const OrewaToAirport = () => {
             Premium door-to-door airport transfer service from Orewa. Professional drivers, luxury vehicles, guaranteed pickup times.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
-              Book Orewa Airport Transfer
+            <Button asChild size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Book Orewa Airport Transfer
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-              Get Instant Quote
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Get Instant Quote
+              </Link>
             </Button>
           </div>
         </div>
@@ -190,8 +195,10 @@ const OrewaToAirport = () => {
             <p className="text-black/80 mb-6">
               Guaranteed pickup times, professional service, and competitive pricing for Orewa residents
             </p>
-            <Button size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
-              Get Instant Quote & Book Online
+            <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Get Instant Quote & Book Online
+              </Link>
             </Button>
           </div>
         </div>
