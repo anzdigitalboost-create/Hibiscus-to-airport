@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -274,11 +275,15 @@ const AirportShuttleOrewa = () => {
               Local expertise, premium service, guaranteed reliability for all Orewa locations
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
-                Book Orewa Pickup Now
+              <Button asChild size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
+                <Link to="/book-now">
+                  Book Orewa Pickup Now
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg">
-                Get Orewa Quote
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg">
+                <Link to="/book-now">
+                  Get Orewa Quote
+                </Link>
               </Button>
             </div>
           </div>

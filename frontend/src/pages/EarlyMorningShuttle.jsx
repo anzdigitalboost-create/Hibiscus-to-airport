@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -26,11 +27,15 @@ const EarlyMorningShuttle = () => {
             Reliable 4AM-7AM airport transfers from Hibiscus Coast. Professional service for early flights with guaranteed pickup times.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
-              Book Early Morning Transfer
+            <Button asChild size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Book Early Morning Transfer
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-              24/7 Booking Available
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+              <Link to="/book-now">
+                24/7 Booking Available
+              </Link>
             </Button>
           </div>
         </div>
@@ -224,11 +229,15 @@ const EarlyMorningShuttle = () => {
               Book your early morning airport transfer with confidence. Professional service from 4 AM onwards.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
-                Book Early Morning Transfer
+              <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8 py-4 text-lg">
+                <Link to="/book-now">
+                  Book Early Morning Transfer
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg">
-                Call 24/7 Support
+              <Button asChild size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg">
+                <a href="tel:+6421743321">
+                  Call 24/7 Support
+                </a>
               </Button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageMeta from '../components/PageMeta';
@@ -26,11 +27,15 @@ const BusinessAirportTransfer = () => {
             Professional corporate transport for executives and business travelers. Luxury vehicles, guaranteed punctuality, and premium service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
-              Book Corporate Transfer
+            <Button asChild size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
+              <Link to="/book-now">
+                Book Corporate Transfer
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-              Setup Business Account
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+              <a href="mailto:info@bookaride.co.nz">
+                Setup Business Account
+              </a>
             </Button>
           </div>
         </div>
@@ -226,11 +231,15 @@ const BusinessAirportTransfer = () => {
               Join leading companies who trust us for professional, reliable airport transfers
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
-                Setup Corporate Account
+              <Button asChild size="lg" className="bg-gold text-black hover:bg-amber-500 px-8 py-4 text-lg">
+                <a href="mailto:info@bookaride.co.nz">
+                  Setup Corporate Account
+                </a>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg">
-                Speak with Account Manager
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg">
+                <a href="mailto:info@bookaride.co.nz">
+                  Speak with Account Manager
+                </a>
               </Button>
             </div>
           </div>

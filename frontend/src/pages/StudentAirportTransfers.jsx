@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { ArrowRight, GraduationCap, Users, DollarSign, Shield, Clock, Luggage, Globe, Mail } from 'lucide-react';
 import Header from '../components/Header';
@@ -51,12 +52,16 @@ const StudentAirportTransfers = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
-                Book Student Transfer
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button asChild className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
+                <Link to="/book-now">
+                  Book Student Transfer
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </Button>
-              <Button variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-10 py-7 text-lg font-semibold">
-                Group Booking Enquiry
+              <Button asChild variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-10 py-7 text-lg font-semibold">
+                <a href="mailto:info@bookaride.co.nz">
+                  Group Booking Enquiry
+                </a>
               </Button>
             </div>
             
@@ -171,9 +176,11 @@ const StudentAirportTransfers = () => {
                 </li>
               </ul>
               
-              <Button className="bg-gold hover:bg-amber-500 text-black px-8 py-6 text-lg font-bold shadow-2xl shadow-gold/20">
-                Book Airport Pickup
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button asChild className="bg-gold hover:bg-amber-500 text-black px-8 py-6 text-lg font-bold shadow-2xl shadow-gold/20">
+                <Link to="/book-now">
+                  Book Airport Pickup
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </Button>
             </div>
             
@@ -283,13 +290,17 @@ const StudentAirportTransfers = () => {
             Safe, affordable, and reliable airport shuttle for students on Hibiscus Coast
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
-              Book Now
-              <ArrowRight className="ml-2 w-5 h-5" />
+            <Button asChild className="bg-gold hover:bg-amber-500 text-black px-10 py-7 text-lg font-bold shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300">
+              <Link to="/book-now">
+                Book Now
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
             </Button>
-            <Button variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-10 py-7 text-lg font-semibold">
-              <Mail className="mr-2 w-5 h-5" />
-              Email info@bookaride.co.nz
+            <Button asChild variant="outline" className="border-2 border-gold/50 hover:border-gold text-gold hover:bg-gold/10 px-10 py-7 text-lg font-semibold">
+              <a href="mailto:info@bookaride.co.nz">
+                <Mail className="mr-2 w-5 h-5" />
+                Email info@bookaride.co.nz
+              </a>
             </Button>
           </div>
         </div>

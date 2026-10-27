@@ -17,6 +17,7 @@ import { BookNow } from "./pages/BookNow";
 // --- Lazy loaded public pages ---
 const ServiceAreas = lazy(() => import("./pages/ServiceAreas"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 // Suburb shuttle pages
 const OrewaShuttle = lazy(() => import("./pages/OrewaShuttle"));
@@ -81,6 +82,14 @@ const MatakanaVillageShuttle = lazy(() => import("./pages/MatakanaVillageShuttle
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
 
+// Bookings are taken on the shared bookaride.co.nz platform, so its terms
+// apply. vercel.json redirects full page loads; this covers in-app links.
+const TERMS_URL = "https://www.bookaride.co.nz/terms-and-conditions";
+function ExternalRedirect({ to }) {
+  React.useEffect(() => { window.location.replace(to); }, [to]);
+  return null;
+}
+
 /** Site chrome around the shared (mirrored) booking pages. */
 function SiteFrame({ children }) {
   return (
@@ -105,6 +114,8 @@ function PublicRoutes() {
 
       {/* FAQ */}
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/terms-and-conditions" element={<ExternalRedirect to={TERMS_URL} />} />
 
       {/* Payment — Stripe returns to /payment-success (shared API contract) */}
       <Route path="/payment-success" element={<SiteFrame><PaymentSuccess /></SiteFrame>} />
